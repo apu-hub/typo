@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="Chayan,Prasun" content="TypingPractice">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ty Po</title>
+    <style>
+        input {margin-top: 10px;}
+        #TypingDiv {display: none;}
+        #ChoseFileDiv {display: block;}
+        .container {font-size: 0;}
+        .container span {font-size: 16px;}
+        .container .wrongAnswer {font-size: 16px;background: rgb(255, 159, 159);/* padding: 2px 4px; */}
+        .container .correctAnswer {font-size: 16px;background: rgb(170, 234, 189);/* padding: 2px 4px; */}
+    </style>
+</head>
+
+<body>
+    <center>
+        <h1 style="color: green;">
+            TyPo
+        </h1>
+        <div id="ParagraphDiv">
+            <br><br>
+            <textarea name="textWord" id="textWord" cols="30" rows="10"></textarea>
+            <b>OR</b>
+            <input type="file" id="textFile">
+            <br><br><br><br>
+            <button onclick="onclickStart()">Start Now</button>
+        </div>
+        <div id="TypingDiv">
+            <br><br>
+            <div id="outDiv" class="container">
+            </div>
+            <textarea name="UserWord" id="UserWord" cols="30" rows="10"></textarea>
+            <br><br><br><br>
+            <button onclick="onclickNew()">New</button>
+        </div>
+    </center>
+
+    <script>
+        var WordStr = '';
+        var lastStringLenght = 0;
+
+        let textFile = document.getElementById('textFile');
+        var ParagraphDiv = document.getElementById('ParagraphDiv');
+        var TypingDiv = document.getElementById('TypingDiv');
+        let UserWord = document.getElementById('UserWord');
+        let textWord = document.getElementById('textWord');
+        var outDiv = document.getElementById('outDiv');
+
+        textWord.value = '';    //  Clean Text Word textarea
+
+        //#########         In case User Word textarea any KeyUp            ##########// 
+
+        UserWord.addEventListener('keyup', () => {
+            UserWordStr = UserWord.value;   //  get text from User Word textarea
+            const lSpan = outDiv.childNodes;    //  get all span inside Out Div
+            //  in case Back Space press
+            if (event.keyCode == 8 || event.keyCode == 229) {
+                for (let i = UserWordStr.length; i < lastStringLenght; i++) {
+                    lSpan[i].className = '';    //  remove class name
+                }
+            }
+            // add last length
+            lastStringLenght = UserWordStr.length;
+            // check all typing letter
+            for (let i = 0; i < UserWordStr.length; i++) {
+                if (lSpan[i].innerHTML == UserWordStr[i]) {
+                    lSpan[i].className = "correctAnswer";   //  in case correct letter
+                } else {
+                    lSpan[i].className = "wrongAnswer";  //  in case wrong letter
+                }
+            }
+
+        });
+
+        //#########         Get Word From Choose Div Textarea           ##########//
+
+        textWord.addEventListener('keyup', () => { WordStr = textWord.value; });
+
+        //#########         Get Word From TEXT file           ##########//
+
+        textFile.addEventListener('change', () => {
+            if (textFile.files.length == 0) return;  //  if no file select then return
+            const file = textFile.files[0];  //  get the first file
+            let reader = new FileReader();  //  read the file
+
+            //  extrac all data from file and convert that to string 
+            //  [ NOTE : below three line code out of my knowledge BUT works for me]
+            reader.onload = (e) => WordStr = String(e.target.result);
+            reader.onerror = (e) => alert(e.target.error.name);
+            reader.readAsText(file);
+        });
+
+        //=======           On Click Start          =======//
+
+        function onclickStart() {
+            ParagraphDiv.style.display = 'none';    //  first hide ParagraphDiv
+            TypingDiv.style.display = 'block';  //  show TypingDiv
+
+            var letterSpans = '';
+            //  get letter from string
+            for (let i = 0; i < WordStr.length; i++) { letterSpans += '<span>' + WordStr[i] + '</span>'; }
+            outDiv.innerHTML = letterSpans;  //  add paragraph to Out Div
+            UserWord.value = '';
+        }
+
+        //=======           On Click New          =======//
+
+        function onclickNew() {
+            ParagraphDiv.style.display = 'block';    // show ParagraphDiv
+            TypingDiv.style.display = 'none';  //  first hide TypingDiv
+            textWord.value = '';
+        }
+    </script>
+
+</body>
+
+</html>
